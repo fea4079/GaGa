@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+		PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+		"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="ProductMapper">
+
+
+	<resultMap id="productSelectMap" type="product">
+		<result property="prodNo" column="prod_no" jdbcType="INTEGER" />
+		<result property="prodName" column="prod_name"
+			jdbcType="VARCHAR" />
+		<result property="prodDetail" column="prod_detail"
+			jdbcType="VARCHAR" />
+		<result property="manuDate" column="manufacture_day"
+			jdbcType="VARCHAR" />
+		<result property="price" column="price" jdbcType="INTEGER" />
+		<result property="fileName" column="image_file"
+			jdbcType="VARCHAR" />
+		<result property="regDate" column="reg_date" jdbcType="DATE" />
+	</resultMap>
+
+	<select id="getProdName" parameterType="product">
+		SELECT prod_name FROM product
+	</select>
+
+	<!-- SQL : INSERT -->
+	<insert id="addProduct" parameterType="product">
+		INSERT INTO product(prod_no, prod_name, prod_detail, manufacture_day, price,
+		image_file, reg_date)
+		VALUES (seq_product_prod_no.NEXTVAL, #{prodName:VARCHAR},
+		#{prodDetail:VARCHAR}, #{manuDate:VARCHAR}, #{price:INTEGER},
+		#{fileName:VARCHAR}, SYSDATE)
+	</insert>
+
+	<!-- SQL : SELECT ONE -->
+	<select id="getProduct" parameterType="INTEGER"
+		resultMap="productSelectMap">
+		SELECT
+		prod_no , prod_name , prod_detail , manufacture_day ,
+		price , image_file
+		FROM product
+		WHERE prod_no = #{value}
+	</select>
+
+	<!-- SQL : UPDATE -->
+	<update id="updateProduct" parameterType="product">
+		UPDATE product
+		<set>
+			prod_name = #{prodName:VARCHAR} ,
+			prod_detail = #{prodDetail:VARCHAR},
+			manufacture_day = #{manuDate:VARCHAR} ,
+			price = #{price:INTEGER},
+			image_file = #{fileName:VARCHAR}
+			<!-- reg_date = #{regDate} -->
+			<!-- reg_date = TO_DATE(#{regDate},'YYYY/MM/DD') -->
+		</set>
+		WHERE prod_no = #{prodNo}
+	</update>
+
+	<!-- SQL : SELECT LIST -->
+	<select id="getProductList" parameterType="search"
+		resultMap="productSelectMap">
+		SELECT *
+		FROM ( SELECT inner_table.* , ROWNUM AS row_seq
+		FROM ( SELECT prod_no, prod_name, price, prod_detail, manufacture_day,
+		image_file, reg_date
+		FROM product
+		<if test="searchCondition != null">
+			<where>
+				<if test="searchCondition == 0 and searchKeyword !='' ">
+					prod_no LIKE'%${searchKeyword}%'
+				</if>
+				<if test="searchCondition == 1 and searchKeyword !='' ">
+					prod_name LIKE'%${searchKeyword}%'
+				</if>
+				<if test="searchCondition == 2 and searchKeyword !='' ">
+					price LIKE'%${searchKeyword}%'
+				</if>
+				<!-- <if test="searchCondition == 3 and searchKeyword !='' "> prod_detail 
+					LIKE'%#{searchKeyword}%' </if> <if test="searchCondition == 4 and searchKeyword 
+					!='' "> manufacture_day LIKE'%#{searchKeyword}%' </if> <if test="searchCondition 
+					== 5 and searchKeyword !='' "> image_file LIKE'%#{searchKeyword}%' </if> 
+					<if test="searchCondition == 6 and searchKeyword !='' "> reg_date LIKE'%#{searchKeyword}%' 
+					</if> -->
+			</where>
+		</if>
+		ORDER BY prod_no ) inner_table
+		WHERE ROWNUM &lt;= #{endRowNum} )
+		WHERE row_seq BETWEEN #{startRowNum} AND
+		#{endRowNum}
+	</select>
+	<!-- 위 두번째 subQuery 의 WHERE ROWNUM &lt;= #{endRowNum} ) 는 WHERE ROWNUM <= 
+		#{endRowNum} ) 의미이며.. < 는 keyword 로 &lt; 를 사용. <![CDATA[ ~~~ ]]> 를 이용하여 아래와 
+		같이 사용 할 수 있다. CDATA ==> Character Data 의 의미 Java 에서 \n 같은 특수문자 처리 WHERE ROWNUM 
+		<![CDATA[ <=]]> #{endRowNum} ) -->
+
+	<!-- SQL : SELECT ROW Count -->
+	<select id="getTotalCount" parameterType="search"
+		resultType="int">
+		SELECT COUNT(*)
+		FROM( SELECT prod_no , prod_name , price, prod_detail, manufacture_day,
+		image_file, reg_date
+		FROM product
+		<if test="searchCondition != null">
+			<where>
+				<if test="searchCondition == 0 and searchKeyword !='' ">
+					prod_no = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 1 and searchKeyword !='' ">
+					prod_name = #{searchKeyword}
+				</if>
+				<if test="searchCondition == 2 and searchKeyword !='' ">
+					price = #{searchKeyword}
+				</if>
+				<!-- <if test="searchCondition == 3 and searchKeyword !='' "> prod_detail 
+					= #{searchKeyword} </if> <if test="searchCondition == 4 and searchKeyword 
+					!='' "> manufacture_day = #{searchKeyword} </if> <if test="searchCondition 
+					== 5 and searchKeyword !='' "> image_file = #{searchKeyword} </if> <if test="searchCondition 
+					== 6 and searchKeyword !='' "> reg_date = #{searchKeyword} </if> -->
+			</where>
+		</if>
+		) countTable
+	</select>
+
+	<!-- <select id="makeCurrentPageSql" parameterType="search" resultMap="productSelectMap"> 
+		SELECT * FROM ( SELECT inner_table. * , ROWNUM AS row_seq FROM ( "+sql+" 
+		) inner_table WHERE ROWNUM &lt;= #{search.getCurrentPage()}*#{search.getPageSize()} 
+		) WHERE row_seq BETWEEN ((#{search.getCurrentPage()-1)}*#{search.getPageSize()+1)} 
+		AND #{search.getCurrentPage()*search.getPageSize()} </select> -->
+
+</mapper>

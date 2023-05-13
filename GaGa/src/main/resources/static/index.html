@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Model2 MVC Shop</title>
+
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css">
+
+    <!-- Custom CSS -->
+    <style>
+        /* 추가적인 스타일링이 필요한 경우 여기에 작성합니다. */
+    </style>
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <!-- Bootstrap JavaScript -->
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <script type="text/javascript">
+        $(function() {
+            // 회원가입 화면 이동
+            $("a[href='#']:contains('회원가입')").on("click", function() {
+                self.location = "/user/addUser";
+            });
+
+            // 로그인 화면 이동
+            $("a[href='#']:contains('로 그 인')").on("click", function() {
+                self.location = "/user/login";
+            });
+        });
+    </script>
+</head>
+
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Model2 MVC Shop</a>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar">
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="#">회원가입</a></li>
+                    <li><a href="#">로 그 인</a></li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Model2 MVC Shop</h1>
+            <p>로그인 후 사용 가능합니다.</p>
+            <p>로그인 전 검색만 가능합니다.</p>
+            <p>회원가입 하세요.</p>
+
+            <div class="text-center">
+                <a class="btn btn-info btn-lg" href="#">회원가입</a>
+                <a class="btn btn-info btn-lg" href="#">로 그 인</a>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
